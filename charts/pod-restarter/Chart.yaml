@@ -1,0 +1,5 @@
+description: Pod Restarter
+name: pod-restarter
+version: v1.0.0
+appVersion: v1.0.0
+apiVersion: v2

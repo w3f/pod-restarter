@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  schedule: {{ .Values.restarter.schedule | quote }}
+  successfulJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: {{ .Release.Name }}
+          containers:
+          - name: {{ .Release.Name }}
+            image: {{ .Values.restarter.image.repo }}:{{ .Values.restarter.image.tag }}
+            args:
+            - /scripts/restart_all_in_namespace.sh
+            - {{ .Release.Namespace }}
+          restartPolicy: Never
