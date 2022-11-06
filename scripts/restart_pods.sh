@@ -1,8 +1,8 @@
 #!/bin/bash
 NAME=${1}
 KIND=${2} 
-# usage: restart_deployment_pods.sh name deployment 
-# usage: restart_deployment_pods.sh name statefulset 
+# usage: restart_pods.sh name deployment 
+# usage: restart_pods.sh name statefulset 
 
 DESIRED=$(kubectl get ${KIND} ${NAME} -o=jsonpath='{.spec.replicas}')
 
