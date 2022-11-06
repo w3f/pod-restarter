@@ -3,7 +3,7 @@ version: 2
 jobs:
   buildImage:
     docker:
-      - image: web3f/ci-commons:v2.4.4
+      - image: web3f/ci-commons:v3
     steps:
       - checkout
       - setup_remote_docker
@@ -12,13 +12,21 @@ jobs:
             /scripts/build-image.sh web3f/pod-restarter .
   publishImage:
     docker:
-      - image: web3f/ci-commons:v2.4.4
+      - image: web3f/ci-commons:v3
     steps:
       - checkout
       - setup_remote_docker
       - run:
           command: |
-            /scripts/publish-image.sh web3f/pod-restarter          
+            /scripts/publish-image.sh web3f/pod-restarter    
+  publishChart:
+    docker:
+      - image: web3f/ci-commons:v3
+    steps:
+      - checkout
+      - run:
+          command: |
+            /scripts/publish-chart.sh      
 workflows:
   version: 2
   test-deploy:
@@ -30,6 +38,15 @@ workflows:
               only: /.*/
       - publishImage:
           context: dockerhub-bot
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+          requires:
+            - buildImage
+      - publishChart:
+          context: github-bot
           filters:
             branches:
               ignore: /.*/
